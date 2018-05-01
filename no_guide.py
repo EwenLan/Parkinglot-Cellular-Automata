@@ -13,7 +13,11 @@ class car:
     def __init__(self, position):
         self.turned_times = 0
         self.stop_time = 0
-        self.runing_time = 0
+        self.in_time = 0
+        self.out_time = 0
+        self.stoped_time = 0
+        self.running_time = 0
+        self.restart_time = 0
         self.position = [[0, 0], [0, 0]]
         self.waiting_time = 0
         self.stop_stage = 0
@@ -540,8 +544,8 @@ if __name__ == '__main__':
     stoped_car_list = []
     restarted_car_list = []
     out_car = []
-    simulation_time = 300
-    fill_parkinglot_time = 90
+    simulation_time = 90
+    fill_parkinglot_time = 30
 
     in_car_status = pd.DataFrame(columns=['In_Time', 'Plate'])
     out_car_status = pd.DataFrame(
@@ -554,7 +558,9 @@ if __name__ == '__main__':
     newcar = car(entry)
     carlist.append(newcar)
     set_multi_parkinglot_status(entry, 5, parkinglot)
-    in_car_status.append({'In_Time': simulation_time, 'Plate': newcar.plate})
+    newcar.in_time = i
+    in_car_status = in_car_status.append(
+        {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
 
     for i in range(simulation_time):
         if fill_parkinglot_time > 0:
@@ -564,11 +570,12 @@ if __name__ == '__main__':
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
             # set_multi_parkinglot_status(entry, 5, parkinglot)
-            in_car_status.append(
-                {'In_Time': simulation_time, 'Plate': newcar.plate})
+            newcar.in_time = i
+            in_car_status = in_car_status.append(
+                {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
             car_occupy(newcar, parkinglot)
         for j in stoped_car_list:
-            j.stop_time += 1
+            j.stoped_time += 1
             if random.randint(0, 1200) < 5 and fill_parkinglot_time == 0:
                 restarted_car_list.append(copy.copy(j))
                 del stoped_car_list[stoped_car_list.index(j)]
@@ -579,8 +586,9 @@ if __name__ == '__main__':
                 del restarted_car_list[restarted_car_list.index(j)]
         #         out_car_status = pd.DataFrame(
         # columns=['Out_Time', 'Plate', 'Running_Time', 'Waiting_Time', 'Stoped_Time'])
-                out_car_status.append({'Out_Time': simulation_time, 'Plate': j.plate,
-                                       'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time})
+                j.out_time = i
+                out_car_status = out_car_status.append({'Out_Time': j.out_time, 'Plate': j.plate,
+                                                        'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stoped_Time': j.stoped_time}, ignore_index=True)
             if j.restart_stage == 0:
                 # if get_head_frontx_rightx_status(j, -2, 0, parkinglot) == 1:
                 if get_back_status(j, parkinglot) == 1:
@@ -588,12 +596,13 @@ if __name__ == '__main__':
                     recoveries(j.position, parkinglot, designed_parkinglot)
                     j.move_backward()
                     set_multi_parkinglot_status(j.position, 5, parkinglot)
-                    restart_car_status.append({'Restart_Time': simulation_time, 'Plate': j.plate,
-                                               'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time, 'Running_Time': j.running_time})
+                    j.restart_time = i
+                    restart_car_status = restart_car_status.append({'Restart_Time': j.restart_time, 'Plate': j.plate,
+                                                                    'Waiting_Time': j.waiting_time, 'Stoped_Time': j.stoped_time, 'Running_Time': j.running_time}, ignore_index=True)
                 else:
                     j.waiting_time += 1
             elif j.restart_stage == 2:
-                j.runing_time += 1
+                j.running_time += 1
                 if get_head_status(j, guidemap) == 6:
                     if j.get_pose() == 'up':
                         if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
@@ -885,11 +894,12 @@ if __name__ == '__main__':
                         else:
                             j.waiting_time += 1
         for j in carlist:
-            j.runing_time += 1
+            j.running_time += 1
             if j.stop_stage == 9:
                 stoped_car_list.append(copy.copy(j))
-                stop_car_status.append({'Stop_Time': simulation_time, 'Plate': j.plate,
-                                        'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time})
+                j.stop_time = i
+                stop_car_status = stop_car_status.append({'Stop_Time': j.stop_time, 'Plate': j.plate,
+                                                          'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time}, ignore_index=True)
                 del carlist[carlist.index(j)]
                 # print(stoped_car_list)
                 continue
@@ -972,8 +982,9 @@ if __name__ == '__main__':
                     car_turn(j, 'left', parkinglot, designed_parkinglot)
                 elif j.position[0] == wayout[1] or j.position[0] == magic_area[0]:
                     recoveries(j.position, parkinglot, designed_parkinglot)
-                    out_car_status.append({'Out_Time': simulation_time, 'Plate': j.plate,
-                                           'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time})
+                    j.out_time = i
+                    out_car_status = out_car_status.append({'Out_Time': j.out_time, 'Plate': j.plate,
+                                                            'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stoped_Time': j.stoped_time}, ignore_index=True)
                     del carlist[carlist.index(j)]
                 else:
                     j.waiting_time += 1
@@ -982,5 +993,6 @@ if __name__ == '__main__':
         plt.pause(0.005)
     in_car_status.to_excel('in_car_statistics.xlsx')
     stop_car_status.to_excel('stop_car_statistics.xlsx')
-    restart_car_status.to_excel('restart_car_statistics.xlsx')
+    restart_car_status.to_excel(
+        'restart_car_statistics.xlsx')
     out_car_status.to_excel('out_car_statistics.xlsx')
