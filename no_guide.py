@@ -528,8 +528,8 @@ if __name__ == '__main__':
             guidemap.append(copy.copy(guideline))
 
     designed_parkinglot = [copy.copy(i) for i in parkinglot]
-    entry = [[1, 3], [0, 3]]
-    wayout = [[15, 23], [16, 23]]
+    entry = [[6, 1], [6, 0]]
+    wayout = [[6, 15], [6, 16]]
     carlist = []
     stoped_car_list = []
     restarted_car_list = []
