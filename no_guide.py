@@ -572,7 +572,7 @@ if __name__ == '__main__':
         if i in in_car_schedule:
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
-            newcar.in_time = id
+            newcar.in_time = i
             in_car_status = in_car_status.append(
                 {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
             car_occupy(newcar, parkinglot)
