@@ -941,6 +941,7 @@ if __name__ == '__main__':
                 elif get_front_status(j, parkinglot) != 5 and get_front_status(j, designed_parkinglot) != 1 and get_head_right_status(j, designed_parkinglot) == 1 and get_head_right2_status(j, designed_parkinglot) == 1:
                     car_turn(j, 'right', parkinglot, designed_parkinglot)
                 elif j.position[0] == wayout[1]:
+                    recoveries(j.positions, parkinglot, designed_parkinglot)
                     del carlist[carlist.index(j)]
                 else:
                     j.waiting_time += 1
