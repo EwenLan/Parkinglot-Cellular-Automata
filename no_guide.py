@@ -940,6 +940,8 @@ if __name__ == '__main__':
                 # elif get_head_right_status(j, parkinglot) == 1:
                 elif get_front_status(j, parkinglot) != 5 and get_front_status(j, designed_parkinglot) != 1 and get_head_right_status(j, designed_parkinglot) == 1 and get_head_right2_status(j, designed_parkinglot) == 1:
                     car_turn(j, 'right', parkinglot, designed_parkinglot)
+                elif get_front_status(j, designed_parkinglot) != 1 and get_head_front_left_status(j, designed_parkinglot) != 1 and get_head_left_status(j, parkinglot) == 1:
+                    car_turn(j, 'left', parkinglot)
                 elif j.position[0] == wayout[1]:
                     recoveries(j.position, parkinglot, designed_parkinglot)
                     del carlist[carlist.index(j)]
