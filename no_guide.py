@@ -535,12 +535,15 @@ if __name__ == '__main__':
     restarted_car_list = []
     out_car = []
     simulation_time = 120
+    fill_parkinglot_time = 30
 
     carlist.append(car(entry))
     set_multi_parkinglot_status(entry, 5, parkinglot)
 
     for i in range(simulation_time):
-        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4:
+        if fill_parkinglot_time > 0:
+            fill_parkinglot_time -= 1
+        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4 and fill_parkinglot_time == 0:
             #     Put a car at entry.
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
@@ -548,7 +551,7 @@ if __name__ == '__main__':
             car_occupy(newcar, parkinglot)
         for j in stoped_car_list:
             j.stop_time += 1
-            if random.randint(0, 12) < 2:
+            if random.randint(0, 120) < 2:
                 restarted_car_list.append(copy.copy(j))
                 del stoped_car_list[stoped_car_list.index(j)]
         for j in restarted_car_list:
