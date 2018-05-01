@@ -544,8 +544,8 @@ if __name__ == '__main__':
     stoped_car_list = []
     restarted_car_list = []
     out_car = []
-    simulation_time = 90
-    fill_parkinglot_time = 30
+    simulation_time = 240
+    fill_parkinglot_time = 20
 
     in_car_status = pd.DataFrame(columns=['In_Time', 'Plate'])
     out_car_status = pd.DataFrame(
@@ -555,28 +555,39 @@ if __name__ == '__main__':
     restart_car_status = pd.DataFrame(
         columns=['Restart_Time', 'Plate', 'Running_Time', 'Waiting_Time', 'Stoped_Time'])
 
-    newcar = car(entry)
-    carlist.append(newcar)
-    set_multi_parkinglot_status(entry, 5, parkinglot)
-    newcar.in_time = i
-    in_car_status = in_car_status.append(
-        {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
+    in_car_schedule = []
+    with open('in_time.txt', 'r') as f:
+        content = f.readlines()
+        in_car_schedule = [int(i) for i in content]
+    # newcar = car(entry)
+    # carlist.append(newcar)
+    # set_multi_parkinglot_status(entry, 5, parkinglot)
+    # newcar.in_time = i
+    # in_car_status = in_car_status.append(
+    #     {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
 
     for i in range(simulation_time):
         if fill_parkinglot_time > 0:
             fill_parkinglot_time -= 1
-        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4:
-            #     Put a car at entry.
+        if i in in_car_schedule:
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
-            # set_multi_parkinglot_status(entry, 5, parkinglot)
-            newcar.in_time = i
+            newcar.in_time = id
             in_car_status = in_car_status.append(
                 {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
             car_occupy(newcar, parkinglot)
+        # if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4:
+        #     #     Put a car at entry.
+        #     newcar = car(entry)
+        #     carlist.append(copy.copy(newcar))
+        #     # set_multi_parkinglot_status(entry, 5, parkinglot)
+        #     newcar.in_time = i
+        #     in_car_status = in_car_status.append(
+        #         {'In_Time': newcar.in_time, 'Plate': newcar.plate}, ignore_index=True)
+        #     car_occupy(newcar, parkinglot)
         for j in stoped_car_list:
             j.stoped_time += 1
-            if random.randint(0, 1200) < 5 and fill_parkinglot_time == 0:
+            if random.randint(0, 120) < 2 and fill_parkinglot_time == 0:
                 restarted_car_list.append(copy.copy(j))
                 del stoped_car_list[stoped_car_list.index(j)]
         for j in restarted_car_list:
