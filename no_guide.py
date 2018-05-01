@@ -530,12 +530,13 @@ if __name__ == '__main__':
     designed_parkinglot = [copy.copy(i) for i in parkinglot]
     entry = [[6, 1], [6, 0]]
     wayout = [[6, 15], [6, 16]]
+    magic_area = [[5, 16]]
     carlist = []
     stoped_car_list = []
     restarted_car_list = []
     out_car = []
-    simulation_time = 120
-    fill_parkinglot_time = 30
+    simulation_time = 300
+    fill_parkinglot_time = 90
 
     carlist.append(car(entry))
     set_multi_parkinglot_status(entry, 5, parkinglot)
@@ -543,7 +544,7 @@ if __name__ == '__main__':
     for i in range(simulation_time):
         if fill_parkinglot_time > 0:
             fill_parkinglot_time -= 1
-        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4 and fill_parkinglot_time == 0:
+        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4:
             #     Put a car at entry.
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
@@ -551,7 +552,7 @@ if __name__ == '__main__':
             car_occupy(newcar, parkinglot)
         for j in stoped_car_list:
             j.stop_time += 1
-            if random.randint(0, 120) < 2:
+            if random.randint(0, 1200) < 5 and fill_parkinglot_time == 0:
                 restarted_car_list.append(copy.copy(j))
                 del stoped_car_list[stoped_car_list.index(j)]
         for j in restarted_car_list:
@@ -567,21 +568,21 @@ if __name__ == '__main__':
                     j.move_backward()
                     set_multi_parkinglot_status(j.position, 5, parkinglot)
             elif j.restart_stage == 2:
+                j.runing_time += 1
                 if get_head_status(j, guidemap) == 6:
                     if j.get_pose() == 'up':
-                        if get_front_status(j, parkinglot) == 1:
-                            if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
+                        if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
                                 recoveries(j.position, parkinglot,
                                            designed_parkinglot)
                                 j.move_to_right_lane()
                                 set_multi_parkinglot_status(
                                     j.position, 5, parkinglot)
-                            else:
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_forward()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                        elif get_front_status(j, parkinglot) == 1:
+                            recoveries(j.position, parkinglot,
+                                        designed_parkinglot)
+                            j.move_forward()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         else:
                             j.waiting_time += 1
                     elif j.get_pose() == 'down':
@@ -616,19 +617,18 @@ if __name__ == '__main__':
                         else:
                             j.waiting_time += 1
                     elif j.get_pose() == 'down':
-                        if get_front_status(j, parkinglot) == 1:
-                            if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
+                        if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
                                 recoveries(j.position, parkinglot,
                                            designed_parkinglot)
                                 j.move_to_right_lane()
                                 set_multi_parkinglot_status(
                                     j.position, 5, parkinglot)
-                            else:
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_forward()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                        elif get_front_status(j, parkinglot) == 1:
+                            recoveries(j.position, parkinglot,
+                                        designed_parkinglot)
+                            j.move_forward()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         else:
                             j.waiting_time += 1
                     elif j.get_pose() == 'left':
@@ -657,19 +657,18 @@ if __name__ == '__main__':
                         else:
                             j.waiting_time += 1
                     elif j.get_pose() == 'left':
-                        if get_front_status(j, parkinglot) == 1:
-                            if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
+                        if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
                                 recoveries(j.position, parkinglot,
                                            designed_parkinglot)
                                 j.move_to_right_lane()
                                 set_multi_parkinglot_status(
                                     j.position, 5, parkinglot)
-                            else:
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_forward()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                        elif get_front_status(j, parkinglot) == 1:
+                            recoveries(j.position, parkinglot,
+                                        designed_parkinglot)
+                            j.move_forward()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         else:
                             j.waiting_time += 1
                     else:
@@ -704,19 +703,18 @@ if __name__ == '__main__':
                         else:
                             j.waiting_time += 1
                     else:
-                        if get_front_status(j, parkinglot) == 1:
-                            if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
+                        if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
                                 recoveries(j.position, parkinglot,
                                            designed_parkinglot)
                                 j.move_to_right_lane()
                                 set_multi_parkinglot_status(
                                     j.position, 5, parkinglot)
-                            else:
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_forward()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                        elif get_front_status(j, parkinglot) == 1:
+                            recoveries(j.position, parkinglot,
+                                        designed_parkinglot)
+                            j.move_forward()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         else:
                             j.waiting_time += 1
 
@@ -882,31 +880,31 @@ if __name__ == '__main__':
             #     j.move_forward()
             #     set_multi_parkinglot_status(j.position, 5, parkinglot)
             # berth at front
-            elif get_front_status(j, parkinglot) == 2 and get_front2_status(j, parkinglot) == 3:
+            elif get_front_status(j, parkinglot) == 2 and get_front2_status(j, parkinglot) == 3 and random.randint(0, 12) < 10:
                 j.stop_stage = 4
                 recoveries(j.position, parkinglot, designed_parkinglot)
                 j.move_forward()
                 set_multi_parkinglot_status(j.position, 5, parkinglot)
             # berth at front left
-            elif get_head_front_left_status(j, parkinglot) == 2 and get_head_frontx_rightx_status(j, 2, -1, parkinglot) == 3 and get_head_left_status(j, parkinglot) == 1 and get_tail_left_status(j, parkinglot) == 1:
+            elif get_head_front_left_status(j, parkinglot) == 2 and get_head_frontx_rightx_status(j, 2, -1, parkinglot) == 3 and get_head_left_status(j, parkinglot) == 1 and get_tail_left_status(j, parkinglot) == 1 and random.randint(0, 12) < 10:
                 j.stop_stage = 4
                 recoveries(j.position, parkinglot, designed_parkinglot)
                 j.move_to_left_lane()
                 set_multi_parkinglot_status(j.position, 5, parkinglot)
             # berth at front right
-            elif get_head_front_left_status(j, parkinglot) == 2 and get_head_frontx_rightx_status(j, 2, 1, parkinglot) == 3 and get_head_right_status(j, parkinglot) == 1 and get_tail_right_status(j, parkinglot) == 1:
+            elif get_head_front_left_status(j, parkinglot) == 2 and get_head_frontx_rightx_status(j, 2, 1, parkinglot) == 3 and get_head_right_status(j, parkinglot) == 1 and get_tail_right_status(j, parkinglot) == 1 and random.randint(0, 12) < 10:
                 # get_head_front_right_status
                 j.stop_stage = 4
                 recoveries(j.position, parkinglot, designed_parkinglot)
                 j.move_to_right_lane()
                 set_multi_parkinglot_status(j.position, 5, parkinglot)
-            elif get_head_right_status(j, parkinglot) == 2 and get_head_right2_status(j, parkinglot) == 3:
+            elif get_head_right_status(j, parkinglot) == 2 and get_head_right2_status(j, parkinglot) == 3 and random.randint(0, 12) < 10:
                 j.stop_stage = 4
                 car_turn(j, 'right', parkinglot, designed_parkinglot)
-            elif get_head_left_status(j, parkinglot) == 2 and get_head_left2_status(j, parkinglot) == 3:
+            elif get_head_left_status(j, parkinglot) == 2 and get_head_left2_status(j, parkinglot) == 3 and random.randint(0, 12) < 10:
                 j.stop_stage = 4
                 car_turn(j, 'left', parkinglot, designed_parkinglot)
-            elif j.stop_stage == 0 and get_head_frontx_rightx_status(j, 0, -2, parkinglot) == 2 and get_head_frontx_rightx_status(j, 0, -3, parkinglot) == 3 and get_head_left_status(j, parkinglot) == 1:
+            elif j.stop_stage == 0 and get_head_frontx_rightx_status(j, 0, -2, parkinglot) == 2 and get_head_frontx_rightx_status(j, 0, -3, parkinglot) == 3 and get_head_left_status(j, parkinglot) == 1 and random.randint(0, 12) < 10:
                 j.stop_stage = 1
                 car_turn(j, 'left', parkinglot, designed_parkinglot)
             # elif get_head_frontx_rightx_status(j, 1, 2, parkinglot) == 2 and get_head_frontx_rightx_status(j, 1, 3, parkinglot) == 3 and get_head_front_right_status(j, parkinglot) == 1:
@@ -945,7 +943,7 @@ if __name__ == '__main__':
                     car_turn(j, 'right', parkinglot, designed_parkinglot)
                 elif get_front_status(j, designed_parkinglot) != 1 and get_head_front_left_status(j, designed_parkinglot) != 1 and get_head_left_status(j, parkinglot) == 1:
                     car_turn(j, 'left', parkinglot, designed_parkinglot)
-                elif j.position[0] == wayout[1]:
+                elif j.position[0] == wayout[1] or j.position[0] == magic_area[0]:
                     recoveries(j.position, parkinglot, designed_parkinglot)
                     del carlist[carlist.index(j)]
                 else:
