@@ -2,9 +2,13 @@ import random
 from matplotlib import pyplot as plt
 import copy
 import time
+import pandas as pd
 
 
 class car:
+    def randomPlate(self, length):
+        alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
+        self.plate = ''.join([random.choice(alphabet) for _ in range(length)])
 
     def __init__(self, position):
         self.turned_times = 0
@@ -14,6 +18,7 @@ class car:
         self.waiting_time = 0
         self.stop_stage = 0
         self.restart_stage = 0
+        self.randomPlate(12)
         self.position[0][0] = position[0][0]
         self.position[0][1] = position[0][1]
         self.position[1][0] = position[1][0]
@@ -538,8 +543,18 @@ if __name__ == '__main__':
     simulation_time = 300
     fill_parkinglot_time = 90
 
-    carlist.append(car(entry))
+    in_car_status = pd.DataFrame(columns=['In_Time', 'Plate'])
+    out_car_status = pd.DataFrame(
+        columns=['Out_Time', 'Plate', 'Running_Time', 'Waiting_Time', 'Stoped_Time'])
+    stop_car_status = pd.DataFrame(
+        columns=['Stop_Time', 'Plate', 'Running_Time', 'Waiting_Time'])
+    restart_car_status = pd.DataFrame(
+        columns=['Restart_Time', 'Plate', 'Running_Time', 'Waiting_Time', 'Stoped_Time'])
+
+    newcar = car(entry)
+    carlist.append(newcar)
     set_multi_parkinglot_status(entry, 5, parkinglot)
+    in_car_status.append({'In_Time': simulation_time, 'Plate': newcar.plate})
 
     for i in range(simulation_time):
         if fill_parkinglot_time > 0:
@@ -549,6 +564,8 @@ if __name__ == '__main__':
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
             # set_multi_parkinglot_status(entry, 5, parkinglot)
+            in_car_status.append(
+                {'In_Time': simulation_time, 'Plate': newcar.plate})
             car_occupy(newcar, parkinglot)
         for j in stoped_car_list:
             j.stop_time += 1
@@ -560,6 +577,10 @@ if __name__ == '__main__':
                 recoveries(j.position, parkinglot, designed_parkinglot)
                 out_car.append(copy.copy(j))
                 del restarted_car_list[restarted_car_list.index(j)]
+        #         out_car_status = pd.DataFrame(
+        # columns=['Out_Time', 'Plate', 'Running_Time', 'Waiting_Time', 'Stoped_Time'])
+                out_car_status.append({'Out_Time': simulation_time, 'Plate': j.plate,
+                                       'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time})
             if j.restart_stage == 0:
                 # if get_head_frontx_rightx_status(j, -2, 0, parkinglot) == 1:
                 if get_back_status(j, parkinglot) == 1:
@@ -567,19 +588,23 @@ if __name__ == '__main__':
                     recoveries(j.position, parkinglot, designed_parkinglot)
                     j.move_backward()
                     set_multi_parkinglot_status(j.position, 5, parkinglot)
+                    restart_car_status.append({'Restart_Time': simulation_time, 'Plate': j.plate,
+                                               'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time, 'Running_Time': j.running_time})
+                else:
+                    j.waiting_time += 1
             elif j.restart_stage == 2:
                 j.runing_time += 1
                 if get_head_status(j, guidemap) == 6:
                     if j.get_pose() == 'up':
                         if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_to_right_lane()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                            recoveries(j.position, parkinglot,
+                                       designed_parkinglot)
+                            j.move_to_right_lane()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         elif get_front_status(j, parkinglot) == 1:
                             recoveries(j.position, parkinglot,
-                                        designed_parkinglot)
+                                       designed_parkinglot)
                             j.move_forward()
                             set_multi_parkinglot_status(
                                 j.position, 5, parkinglot)
@@ -618,14 +643,14 @@ if __name__ == '__main__':
                             j.waiting_time += 1
                     elif j.get_pose() == 'down':
                         if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_to_right_lane()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                            recoveries(j.position, parkinglot,
+                                       designed_parkinglot)
+                            j.move_to_right_lane()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         elif get_front_status(j, parkinglot) == 1:
                             recoveries(j.position, parkinglot,
-                                        designed_parkinglot)
+                                       designed_parkinglot)
                             j.move_forward()
                             set_multi_parkinglot_status(
                                 j.position, 5, parkinglot)
@@ -658,14 +683,14 @@ if __name__ == '__main__':
                             j.waiting_time += 1
                     elif j.get_pose() == 'left':
                         if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_to_right_lane()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                            recoveries(j.position, parkinglot,
+                                       designed_parkinglot)
+                            j.move_to_right_lane()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         elif get_front_status(j, parkinglot) == 1:
                             recoveries(j.position, parkinglot,
-                                        designed_parkinglot)
+                                       designed_parkinglot)
                             j.move_forward()
                             set_multi_parkinglot_status(
                                 j.position, 5, parkinglot)
@@ -704,14 +729,14 @@ if __name__ == '__main__':
                             j.waiting_time += 1
                     else:
                         if get_head_front_right_status(j, parkinglot) == 1 and get_head_right_status(j, parkinglot) == 1 and not is_has_right_cross(j, parkinglot, designed_parkinglot):
-                                recoveries(j.position, parkinglot,
-                                           designed_parkinglot)
-                                j.move_to_right_lane()
-                                set_multi_parkinglot_status(
-                                    j.position, 5, parkinglot)
+                            recoveries(j.position, parkinglot,
+                                       designed_parkinglot)
+                            j.move_to_right_lane()
+                            set_multi_parkinglot_status(
+                                j.position, 5, parkinglot)
                         elif get_front_status(j, parkinglot) == 1:
                             recoveries(j.position, parkinglot,
-                                        designed_parkinglot)
+                                       designed_parkinglot)
                             j.move_forward()
                             set_multi_parkinglot_status(
                                 j.position, 5, parkinglot)
@@ -863,8 +888,10 @@ if __name__ == '__main__':
             j.runing_time += 1
             if j.stop_stage == 9:
                 stoped_car_list.append(copy.copy(j))
+                stop_car_status.append({'Stop_Time': simulation_time, 'Plate': j.plate,
+                                        'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time})
                 del carlist[carlist.index(j)]
-                print(stoped_car_list)
+                # print(stoped_car_list)
                 continue
             elif j.stop_stage in [1, 2, 4, 5, 7, 8]:
                 j.stop_stage += 1
@@ -945,11 +972,15 @@ if __name__ == '__main__':
                     car_turn(j, 'left', parkinglot, designed_parkinglot)
                 elif j.position[0] == wayout[1] or j.position[0] == magic_area[0]:
                     recoveries(j.position, parkinglot, designed_parkinglot)
+                    out_car_status.append({'Out_Time': simulation_time, 'Plate': j.plate,
+                                           'Running_Time': j.running_time, 'Waiting_Time': j.waiting_time, 'Stop_Time': j.stop_time})
                     del carlist[carlist.index(j)]
                 else:
                     j.waiting_time += 1
         plt.imshow(parkinglot)
         plt.title('simulation_time = %d' % i)
         plt.pause(0.005)
-    for i in carlist:
-        print(i.stop_time)
+    in_car_status.to_excel('in_car_statistics.xlsx')
+    stop_car_status.to_excel('stop_car_statistics.xlsx')
+    restart_car_status.to_excel('restart_car_statistics.xlsx')
+    out_car_status.to_excel('out_car_statistics.xlsx')
