@@ -177,7 +177,7 @@ class car:
             self.position[0][0]
             self.position[0][1] += 1
             self.position[1][0]
-            self.position[1][0] += 1
+            self.position[1][1] += 1
             return
         if self.get_pose() == 'right':
             self.position[0][0]
@@ -534,13 +534,13 @@ if __name__ == '__main__':
     stoped_car_list = []
     restarted_car_list = []
     out_car = []
-    simulation_time = 300
+    simulation_time = 120
 
     carlist.append(car(entry))
     set_multi_parkinglot_status(entry, 5, parkinglot)
 
     for i in range(simulation_time):
-        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 6:
+        if get_multi_parkinglot_status(entry, parkinglot) == [1, 1] and random.randint(0, 12) < 4:
             #     Put a car at entry.
             newcar = car(entry)
             carlist.append(copy.copy(newcar))
